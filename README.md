@@ -1,5 +1,7 @@
 # Creator Stack Checkup
 
+[中文说明](README.zh-CN.md)
+
 A local-first PWA for auditing AI tools and creator subscriptions before they quietly drain your budget.
 
 Creator Stack Checkup is intentionally simple:
@@ -73,4 +75,3 @@ All subscription data is stored in browser localStorage. Calendar, email, and SM
 ## License
 
 MIT
-

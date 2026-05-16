@@ -20,6 +20,17 @@ export type BusinessValue = "essential" | "useful" | "optional";
 export type CancellationRisk = "low" | "medium" | "high";
 export type ToolStatus = "active" | "review" | "canceled";
 export type RecommendationLabel = "Keep" | "Review" | "Downgrade" | "Cancel Candidate";
+export type EvaluationReasonCode =
+  | "alreadyCanceled"
+  | "lowUsageLowValueHighCost"
+  | "dailyEssential"
+  | "mediumValueOverlap"
+  | "noUrgentIssue"
+  | "overlap"
+  | "soonRenewal"
+  | "lowUsage"
+  | "highCancellationRisk"
+  | "defaultReview";
 
 export type SubscriptionTool = {
   id: string;
@@ -48,6 +59,7 @@ export type ToolEvaluation = {
   monthlyCost: number;
   annualCost: number;
   recommendation: RecommendationLabel;
+  reasonCodes: EvaluationReasonCode[];
   reasons: string[];
   savingsIfCanceled: number;
   renewalInDays: number | null;
@@ -63,4 +75,3 @@ export type StackSummary = {
   reviewCount: number;
   duplicateCategories: Array<{ category: ToolCategory; count: number }>;
 };
-

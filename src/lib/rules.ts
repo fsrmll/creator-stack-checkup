@@ -1,6 +1,7 @@
 import type {
   BillingCycle,
   BusinessValue,
+  EvaluationReasonCode,
   RecommendationLabel,
   StackSummary,
   SubscriptionTool,
@@ -63,7 +64,13 @@ export function evaluateTool(
   const mediumValue = valueScore(tool.businessValue) === 2;
   const soonRenewal = renewalInDays !== null && renewalInDays >= 0 && renewalInDays <= 30;
   const reasons: string[] = [];
+  const reasonCodes: EvaluationReasonCode[] = [];
   let recommendation: RecommendationLabel = "Review";
+
+  function addReason(code: EvaluationReasonCode, message: string) {
+    reasonCodes.push(code);
+    reasons.push(message);
+  }
 
   if (tool.status === "canceled") {
     return {
@@ -71,6 +78,7 @@ export function evaluateTool(
       monthlyCost: 0,
       annualCost: 0,
       recommendation: "Review",
+      reasonCodes: ["alreadyCanceled"],
       reasons: ["Already marked as canceled."],
       savingsIfCanceled: 0,
       renewalInDays,
@@ -79,30 +87,31 @@ export function evaluateTool(
 
   if (lowUsage && highCost && lowValue) {
     recommendation = "Cancel Candidate";
-    reasons.push("Low usage, low business value, and meaningful monthly cost.");
+    addReason("lowUsageLowValueHighCost", "Low usage, low business value, and meaningful monthly cost.");
   } else if (tool.usageFrequency === "daily" && tool.businessValue === "essential") {
     recommendation = "Keep";
-    reasons.push("Used daily and marked essential.");
+    addReason("dailyEssential", "Used daily and marked essential.");
   } else if (mediumValue && overlap && tool.cancellationRisk !== "high") {
     recommendation = "Downgrade";
-    reasons.push("Useful but overlaps with another tool in the same category.");
+    addReason("mediumValueOverlap", "Useful but overlaps with another tool in the same category.");
   } else if (overlap || soonRenewal || lowUsage) {
     recommendation = "Review";
   } else {
     recommendation = "Keep";
-    reasons.push("No urgent cost, renewal, or overlap issue detected.");
+    addReason("noUrgentIssue", "No urgent cost, renewal, or overlap issue detected.");
   }
 
-  if (overlap) reasons.push(`Multiple active tools in ${tool.category}.`);
-  if (soonRenewal) reasons.push(`Renews in ${renewalInDays} day${renewalInDays === 1 ? "" : "s"}.`);
-  if (lowUsage) reasons.push("Usage is monthly or rarely.");
-  if (tool.cancellationRisk === "high") reasons.push("High cancellation risk: check workflow impact first.");
+  if (overlap) addReason("overlap", `Multiple active tools in ${tool.category}.`);
+  if (soonRenewal) addReason("soonRenewal", `Renews in ${renewalInDays} day${renewalInDays === 1 ? "" : "s"}.`);
+  if (lowUsage) addReason("lowUsage", "Usage is monthly or rarely.");
+  if (tool.cancellationRisk === "high") addReason("highCancellationRisk", "High cancellation risk: check workflow impact first.");
 
   return {
     tool,
     monthlyCost,
     annualCost,
     recommendation,
+    reasonCodes: reasonCodes.length ? reasonCodes : ["defaultReview"],
     reasons: reasons.length ? reasons : ["Review this subscription during your next monthly checkup."],
     savingsIfCanceled: recommendation === "Cancel Candidate" || recommendation === "Downgrade" ? monthlyCost : 0,
     renewalInDays,
@@ -145,4 +154,3 @@ export function summarizeStack(evaluations: ToolEvaluation[]): StackSummary {
     duplicateCategories: getDuplicateCategories(activeEvaluations.map((item) => item.tool)),
   };
 }
-

@@ -61,6 +61,12 @@ section[id] {
   min-width: 0;
 }
 
+.header-actions {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+
 .app-header h1 {
   margin: 0;
   font-size: 42px;
@@ -105,6 +111,20 @@ section[id] {
   color: #115e59;
   background: #ccfbf1;
   white-space: normal;
+}
+
+.language-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .count-pill {
@@ -352,6 +372,11 @@ button:disabled {
   line-height: 1.45;
 }
 
+.suggestion-item > strong {
+  white-space: nowrap;
+  text-align: right;
+}
+
 .status-chip.keep {
   color: #166534;
   background: #dcfce7;
@@ -468,6 +493,14 @@ button:disabled {
     white-space: normal;
   }
 
+  .header-actions {
+    justify-items: stretch;
+  }
+
+  .language-button {
+    justify-self: start;
+  }
+
   .mobile-summary {
     position: sticky;
     top: 0;
@@ -532,6 +565,10 @@ button:disabled {
   .section-heading > .ghost-button,
   .tool-card-header > .status-chip {
     justify-self: start;
+  }
+
+  .suggestion-item > strong {
+    text-align: left;
   }
 
   .reminder-actions {

@@ -1,7 +1,7 @@
 {
-  "name": "Creator Stack Checkup",
-  "short_name": "Stack Checkup",
-  "description": "Audit your AI tools and creator subscriptions before they quietly drain your budget.",
+  "name": "Creator Stack Checkup 订阅体检",
+  "short_name": "订阅体检",
+  "description": "Audit creator subscriptions locally. 本地优先的创作者订阅体检工具。",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8fafc",
@@ -15,4 +15,3 @@
     }
   ]
 }
-

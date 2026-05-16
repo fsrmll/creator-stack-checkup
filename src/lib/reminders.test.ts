@@ -39,4 +39,9 @@ describe("reminder links", () => {
     expect(buildMailtoUrl(tool)).toContain("mailto:?");
     expect(buildSmsUrl(tool)).toContain("sms:?");
   });
+
+  it("builds Chinese reminder copy when requested", () => {
+    expect(buildIcsContent(tool, "zh")).toContain("SUMMARY:复盘 Claude Pro 订阅");
+    expect(decodeURIComponent(buildSmsUrl(tool, "zh"))).toContain("决定保留、降级还是取消");
+  });
 });
