@@ -292,9 +292,21 @@ export function isLanguage(value: string | null): value is Language {
 }
 
 export function getInitialLanguage(): Language {
-  const saved = globalThis.localStorage?.getItem(LANGUAGE_STORAGE_KEY);
-  if (isLanguage(saved)) return saved;
+  try {
+    const saved = globalThis.localStorage?.getItem(LANGUAGE_STORAGE_KEY);
+    if (isLanguage(saved)) return saved;
+  } catch {
+    // Storage may be disabled; fall back to browser language.
+  }
   return globalThis.navigator?.language?.toLowerCase().startsWith("zh") ? "zh" : "en";
+}
+
+export function saveLanguagePreference(language: Language): void {
+  try {
+    globalThis.localStorage?.setItem(LANGUAGE_STORAGE_KEY, language);
+  } catch {
+    // Language still works for the current session when persistence is unavailable.
+  }
 }
 
 export function getCurrencyFormatter(language: Language, maximumFractionDigits: number) {

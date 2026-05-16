@@ -28,11 +28,12 @@ import {
   formatUsageFrequency,
   getCurrencyFormatter,
   getInitialLanguage,
-  LANGUAGE_STORAGE_KEY,
   languageNames,
+  saveLanguagePreference,
   ui,
   type Language,
 } from "./lib/i18n";
+import { createId } from "./lib/ids";
 import { categories, toolPresets } from "./lib/presets";
 import { evaluateStack, summarizeStack } from "./lib/rules";
 import {
@@ -82,7 +83,7 @@ function createSampleStack(): SubscriptionTool[] {
   return [
     {
       ...createEmptyForm(),
-      id: crypto.randomUUID(),
+      id: createId(),
       name: "ChatGPT Plus",
       category: "AI Chat",
       price: 20,
@@ -92,7 +93,7 @@ function createSampleStack(): SubscriptionTool[] {
     },
     {
       ...createEmptyForm(),
-      id: crypto.randomUUID(),
+      id: createId(),
       name: "Claude Pro",
       category: "AI Chat",
       price: 20,
@@ -102,7 +103,7 @@ function createSampleStack(): SubscriptionTool[] {
     },
     {
       ...createEmptyForm(),
-      id: crypto.randomUUID(),
+      id: createId(),
       name: "Midjourney",
       category: "Design",
       price: 10,
@@ -113,7 +114,7 @@ function createSampleStack(): SubscriptionTool[] {
     },
     {
       ...createEmptyForm(),
-      id: crypto.randomUUID(),
+      id: createId(),
       name: "Cursor Pro",
       category: "AI Coding",
       price: 20,
@@ -157,7 +158,7 @@ export default function App() {
   );
 
   useEffect(() => {
-    window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    saveLanguagePreference(language);
     document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     document.title = language === "zh" ? `${t.appTitle} | Creator Stack Checkup` : t.appTitle;
   }, [language, t.appTitle]);
@@ -210,7 +211,7 @@ export default function App() {
     setTools((current) => [
       {
         ...form,
-        id: crypto.randomUUID(),
+        id: createId(),
         name: form.name.trim(),
         price: Math.max(0, form.price),
       },

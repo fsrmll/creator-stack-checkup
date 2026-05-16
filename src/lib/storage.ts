@@ -1,23 +1,29 @@
+import { parseToolsJson } from "./exporters";
 import type { SubscriptionTool } from "./types";
 
 const STORAGE_KEY = "creator-stack-checkup.tools.v1";
 
 export function loadTools(): SubscriptionTool[] {
-  const raw = window.localStorage.getItem(STORAGE_KEY);
-  if (!raw) return [];
   try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    const raw = globalThis.localStorage?.getItem(STORAGE_KEY);
+    return raw ? parseToolsJson(raw) : [];
   } catch {
     return [];
   }
 }
 
 export function saveTools(tools: SubscriptionTool[]): void {
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(tools));
+  try {
+    globalThis.localStorage?.setItem(STORAGE_KEY, JSON.stringify(tools));
+  } catch {
+    // localStorage can be unavailable in private or hardened browser contexts.
+  }
 }
 
 export function clearTools(): void {
-  window.localStorage.removeItem(STORAGE_KEY);
+  try {
+    globalThis.localStorage?.removeItem(STORAGE_KEY);
+  } catch {
+    // Ignore storage failures; app state still works for the current session.
+  }
 }
-

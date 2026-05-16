@@ -1,3 +1,4 @@
+import { createId } from "./ids";
 import { categories } from "./presets";
 import type {
   BillingCycle,
@@ -58,7 +59,7 @@ function normalizeImportedTool(value: unknown): SubscriptionTool {
   if (!name) throw new Error("Every imported tool needs a name.");
 
   return {
-    id: stringValue(raw.id) || makeId(),
+    id: stringValue(raw.id) || createId("imported"),
     name,
     category: pick(raw.category, categories, "Other"),
     price: Math.max(0, numberValue(raw.price)),
@@ -89,8 +90,4 @@ function numberValue(value: unknown): number {
 function validDateValue(value: unknown): boolean {
   if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   return !Number.isNaN(new Date(`${value}T12:00:00`).getTime());
-}
-
-function makeId(): string {
-  return globalThis.crypto?.randomUUID?.() ?? `imported-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
