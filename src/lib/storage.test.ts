@@ -34,7 +34,7 @@ describe("local tool storage", () => {
       name: "Stored Tool",
       category: "Other",
       price: 12,
-      billingCycle: "monthly",
+      billingCycle: "yearly",
       renewalDate: "",
     });
   });

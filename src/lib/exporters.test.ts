@@ -27,7 +27,7 @@ describe("JSON import", () => {
       name: "Imported Tool",
       category: "Other",
       price: 19.5,
-      billingCycle: "monthly",
+      billingCycle: "yearly",
       renewalDate: "",
       usageFrequency: "weekly",
       businessValue: "useful",

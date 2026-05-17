@@ -43,6 +43,7 @@ import {
   buildOutlookCalendarUrl,
   buildSmsUrl,
   downloadTextFile,
+  reminderFilename,
 } from "./lib/reminders";
 import { loadTools, saveTools } from "./lib/storage";
 import type {
@@ -237,7 +238,7 @@ export default function App() {
 
   function downloadIcs(tool: SubscriptionTool) {
     downloadTextFile(
-      `${tool.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-reminder.ics`,
+      reminderFilename(tool.name),
       buildIcsContent(tool, language),
       "text/calendar;charset=utf-8",
     );

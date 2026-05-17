@@ -6,6 +6,7 @@ import {
   buildMailtoUrl,
   buildOutlookCalendarUrl,
   buildSmsUrl,
+  reminderFilename,
 } from "./reminders";
 
 const tool: SubscriptionTool = {
@@ -43,5 +44,10 @@ describe("reminder links", () => {
   it("builds Chinese reminder copy when requested", () => {
     expect(buildIcsContent(tool, "zh")).toContain("SUMMARY:复盘 Claude Pro 订阅");
     expect(decodeURIComponent(buildSmsUrl(tool, "zh"))).toContain("决定保留、降级还是取消");
+  });
+
+  it("creates safe ICS filenames", () => {
+    expect(reminderFilename("Claude Pro")).toBe("claude-pro-reminder.ics");
+    expect(reminderFilename("订阅工具")).toBe("subscription-reminder.ics");
   });
 });

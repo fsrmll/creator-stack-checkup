@@ -28,6 +28,23 @@ export function toAnnualCost(price: number, billingCycle: BillingCycle): number 
   return toMonthlyCost(price, billingCycle) * 12;
 }
 
+export function renewalWindowCost(
+  price: number,
+  billingCycle: BillingCycle,
+  renewalInDays: number | null,
+  windowDays = 30,
+): number {
+  if (!Number.isFinite(price) || price <= 0 || renewalInDays === null || renewalInDays < 0 || renewalInDays > windowDays) {
+    return 0;
+  }
+
+  if (billingCycle === "weekly") {
+    return price * (Math.floor((windowDays - renewalInDays) / 7) + 1);
+  }
+
+  return price;
+}
+
 export function daysUntil(dateValue: string, today = new Date()): number | null {
   if (!dateValue) return null;
   const target = new Date(`${dateValue}T12:00:00`);
@@ -136,12 +153,10 @@ export function getDuplicateCategories(tools: SubscriptionTool[]): Array<{ categ
 export function summarizeStack(evaluations: ToolEvaluation[]): StackSummary {
   const activeEvaluations = evaluations.filter(({ tool }) => tool.status !== "canceled");
   const monthlyBurn = activeEvaluations.reduce((sum, item) => sum + item.monthlyCost, 0);
-  const upcomingRenewalCost30d = activeEvaluations.reduce((sum, item) => {
-    if (item.renewalInDays !== null && item.renewalInDays >= 0 && item.renewalInDays <= 30) {
-      return sum + item.monthlyCost;
-    }
-    return sum;
-  }, 0);
+  const upcomingRenewalCost30d = activeEvaluations.reduce(
+    (sum, item) => sum + renewalWindowCost(item.tool.price, item.tool.billingCycle, item.renewalInDays, 30),
+    0,
+  );
 
   return {
     activeCount: activeEvaluations.length,

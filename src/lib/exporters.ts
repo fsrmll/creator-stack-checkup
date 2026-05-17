@@ -63,7 +63,7 @@ function normalizeImportedTool(value: unknown): SubscriptionTool {
     name,
     category: pick(raw.category, categories, "Other"),
     price: Math.max(0, numberValue(raw.price)),
-    billingCycle: pick(raw.billingCycle, billingCycles, "monthly"),
+    billingCycle: normalizeBillingCycle(raw.billingCycle),
     renewalDate: validDateValue(raw.renewalDate) ? stringValue(raw.renewalDate) : "",
     usageFrequency: pick(raw.usageFrequency, usageFrequencies, "weekly"),
     businessValue: pick(raw.businessValue, businessValues, "useful"),
@@ -72,6 +72,16 @@ function normalizeImportedTool(value: unknown): SubscriptionTool {
     notes: stringValue(raw.notes),
     status: pick(raw.status, statuses, "active"),
   };
+}
+
+function normalizeBillingCycle(value: unknown): BillingCycle {
+  if (typeof value !== "string") return "monthly";
+  const normalized = value.trim().toLowerCase();
+  if (normalized === "annual" || normalized === "annually" || normalized === "year" || normalized === "yearly") return "yearly";
+  if (normalized === "quarter" || normalized === "quarterly") return "quarterly";
+  if (normalized === "week" || normalized === "weekly") return "weekly";
+  if (normalized === "month" || normalized === "monthly") return "monthly";
+  return pick(value, billingCycles, "monthly");
 }
 
 function pick<T extends string>(value: unknown, allowed: readonly T[], fallback: T): T {

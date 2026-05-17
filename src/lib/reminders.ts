@@ -8,7 +8,7 @@ function dateToCalendarValue(dateValue: string): string {
 function addDaysToDateValue(dateValue: string, days: number): string {
   const date = new Date(`${dateValue}T12:00:00`);
   date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
+  return formatDateValue(date);
 }
 
 function calendarEndDate(dateValue: string): string {
@@ -103,4 +103,20 @@ export function downloadTextFile(filename: string, content: string, mimeType: st
   link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+export function reminderFilename(toolName: string): string {
+  const slug = toolName
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${slug || "subscription"}-reminder.ics`;
+}
+
+function formatDateValue(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
